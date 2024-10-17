@@ -1,35 +1,41 @@
 const jwt = require('jsonwebtoken');
+const { User } = require('../models/User');
 
+// Set token secret and expiration date
 const secret = 'mysecretsshhhhh';
 const expiration = '2h';
 
-module.exports = {
-  authMiddleware: function ({ req }) {
-    // Token can be sent via headers or req.body, or req.query
-    let token = req.body.token || req.query.token || req.headers.authorization;
+const authMiddleware = function ({ req }) {
+  // Allows token to be sent via headers
+  let token = req.headers.authorization || '';
 
-    // If sent as a Bearer token, split it out
-    if (req.headers.authorization) {
-      token = token.split(' ').pop().trim();
-    }
-
-    if (!token) {
-      return req;
-    }
-
-    try {
-      // Verify token and extract user data
-      const { data } = jwt.verify(token, secret, { maxAge: expiration });
-      req.user = data;
-    } catch {
-      console.log('Invalid token');
-    }
-
-    // Return the request object, possibly with the user attached
-    return req;
-  },
-  signToken: function ({ username, email, _id }) {
-    const payload = { username, email, _id };
-    return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
+  // Split the token from "Bearer <tokenvalue>"
+  if (token.startsWith('Bearer ')) {
+    token = token.split(' ').pop().trim();
   }
+
+  // Initialize user as null
+  let user = null;
+
+  // If there is a token, verify it
+  if (token) {
+    try {
+      const { data } = jwt.verify(token, secret, { maxAge: expiration });
+      user = data; // If token is valid, set user to the data from token
+    } catch (err) {
+      console.log('Invalid token:', err);
+      user = null; // Set user to null if token verification fails
+    }
+  }
+
+  // Return the user object as part of the context
+  return { user };
 };
+
+const signToken = function ({ username, email, _id }) {
+  const payload = { username, email, _id };
+
+  return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
+};
+
+module.exports = { authMiddleware, signToken };
