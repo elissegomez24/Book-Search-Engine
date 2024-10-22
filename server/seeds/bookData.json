@@ -1,0 +1,72 @@
+[
+    {
+        "title": "Star Wars",
+        "authors": [ "Author Name" ],
+        "description": "A book about Star Wars",
+        "image": "https://example.com/star-wars-image.jpg",
+        "link": "https://example.com/star-wars"
+    },
+    {
+        "title": "The Lord of the Rings",
+        "authors": [ "J.R.R. Tolkien" ],
+        "description": "A high-fantasy novel about the journey to destroy the One Ring.",
+        "image": "https://example.com/lord-of-the-rings-image.jpg",
+        "link": "https://example.com/lord-of-the-rings"
+    },
+    {
+        "title": "1984",
+        "authors": [ "George Orwell" ],
+        "description": "A dystopian novel set in a totalitarian society ruled by Big Brother.",
+        "image": "https://example.com/1984-image.jpg",
+        "link": "https://example.com/1984"
+    },
+    {
+        "title": "To Kill a Mockingbird",
+        "authors": [ "Harper Lee" ],
+        "description": "A novel about the serious issues of race and rape, told through the eyes of a young girl.",
+        "image": "https://example.com/to-kill-a-mockingbird-image.jpg",
+        "link": "https://example.com/to-kill-a-mockingbird"
+    },
+    {
+        "title": "The Great Gatsby",
+        "authors": [ "F. Scott Fitzgerald" ],
+        "description": "A story of the young and mysterious millionaire Jay Gatsby and his obsession with the beautiful Daisy Buchanan.",
+        "image": "https://example.com/great-gatsby-image.jpg",
+        "link": "https://example.com/great-gatsby"
+    },
+    {
+        "title": "Moby Dick",
+        "authors": [ "Herman Melville" ],
+        "description": "The narrative of the sailor Ishmael's adventures aboard the whaling ship Pequod.",
+        "image": "https://example.com/moby-dick-image.jpg",
+        "link": "https://example.com/moby-dick"
+    },
+    {
+        "title": "Pride and Prejudice",
+        "authors": [ "Jane Austen" ],
+        "description": "A romantic novel that charts the emotional development of the protagonist Elizabeth Bennet.",
+        "image": "https://example.com/pride-and-prejudice-image.jpg",
+        "link": "https://example.com/pride-and-prejudice"
+    },
+    {
+        "title": "The Catcher in the Rye",
+        "authors": [ "J.D. Salinger" ],
+        "description": "A story about a young boy's experiences in New York City after being expelled from prep school.",
+        "image": "https://example.com/catcher-in-the-rye-image.jpg",
+        "link": "https://example.com/catcher-in-the-rye"
+    },
+    {
+        "title": "The Hobbit",
+        "authors": [ "J.R.R. Tolkien" ],
+        "description": "The adventures of a hobbit named Bilbo Baggins who is swept into a quest to reclaim treasure guarded by a dragon.",
+        "image": "https://example.com/the-hobbit-image.jpg",
+        "link": "https://example.com/the-hobbit"
+    },
+    {
+        "title": "The Chronicles of Narnia",
+        "authors": [ "C.S. Lewis" ],
+        "description": "A series of seven fantasy novels that take place in the magical land of Narnia.",
+        "image": "https://example.com/narnia-image.jpg",
+        "link": "https://example.com/narnia"
+    }
+]

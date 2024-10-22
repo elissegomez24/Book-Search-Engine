@@ -1,35 +1,32 @@
 const jwt = require('jsonwebtoken');
-const { User } = require('../models/User');
+const { User } = require('../models');
 
 // Set token secret and expiration date
 const secret = 'mysecretsshhhhh';
 const expiration = '2h';
 
-const authMiddleware = function ({ req }) {
-  // Allows token to be sent via headers
+const authMiddleware = async ({ req }) => {
+  // Set token to be used for authentication
   let token = req.headers.authorization || '';
 
-  // Split the token from "Bearer <tokenvalue>"
+  // If the token is present, remove the "Bearer " from it
   if (token.startsWith('Bearer ')) {
     token = token.split(' ').pop().trim();
   }
 
-  // Initialize user as null
-  let user = null;
+  let user = {};
 
-  // If there is a token, verify it
+  // If there's a token, verify it
   if (token) {
     try {
-      const { data } = jwt.verify(token, secret, { maxAge: expiration });
-      user = data; // If token is valid, set user to the data from token
-    } catch (err) {
-      console.log('Invalid token:', err);
-      user = null; // Set user to null if token verification fails
+      const { data } = jwt.verify(token, secret);
+      req.user = await User.findById(data._id).select('-__v -password');
+    } catch {
+      console.log('Invalid token');
     }
   }
 
-  // Return the user object as part of the context
-  return { user };
+  return req;
 };
 
 const signToken = function ({ username, email, _id }) {

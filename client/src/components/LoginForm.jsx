@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-import { useMutation } from '@apollo/client'; 
-import { LOGIN_USER } from '../utils/mutations'; 
+import { useMutation } from '@apollo/client';
+import { LOGIN_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 
 const LoginForm = () => {
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(''); // For custom error messages
 
   // Use the LOGIN_USER mutation
   const [loginUser] = useMutation(LOGIN_USER);
@@ -29,17 +30,28 @@ const LoginForm = () => {
 
     try {
       const { data } = await loginUser({
-        variables: { ...userFormData }, // Pass user data as variables
+        variables: { ...userFormData },
       });
-
-      // Assuming your mutation returns a token and user object
-      const { token } = data.loginUser; 
-      Auth.login(token);
+      console.log('Mutation response:', data); // Log the response to see its structure
+      console.log(data)
+      if (data.login) {
+        const { token } = data.login;
+        Auth.login(token);
+      } else {
+        setErrorMessage('Login failed. Please try again.');
+        setShowAlert(true);
+      }
     } catch (err) {
-      console.error(err);
+      console.error('Error during login:', err); // Log the error for debugging
+      if (err.message) {
+        setErrorMessage(err.message);
+      } else {
+        setErrorMessage('An unexpected error occurred.');
+      }
       setShowAlert(true);
     }
 
+    // Reset form fields after submission
     setUserFormData({
       email: '',
       password: '',
@@ -50,7 +62,7 @@ const LoginForm = () => {
     <>
       <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
         <Alert dismissible onClose={() => setShowAlert(false)} show={showAlert} variant='danger'>
-          Something went wrong with your login credentials!
+          {errorMessage} {/* Display the specific error message */}
         </Alert>
         <Form.Group className='mb-3'>
           <Form.Label htmlFor='email'>Email</Form.Label>

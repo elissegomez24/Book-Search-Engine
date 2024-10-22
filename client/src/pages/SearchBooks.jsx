@@ -1,16 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/client';
-import {
-  Container,
-  Col,
-  Form,
-  Button,
-  Card,
-  Row
-} from 'react-bootstrap';
-
+import { Container, Col, Form, Button, Card, Row } from 'react-bootstrap';
 import Auth from '../utils/auth';
-import { SAVE_BOOK } from '../utils/mutations'; // Import your mutation
+import { SAVE_BOOK } from '../utils/mutations';
 import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 
@@ -36,63 +28,59 @@ const SearchBooks = () => {
     event.preventDefault();
 
     if (!searchInput) {
+      alert('Please enter a search term'); // Alert user for empty input
       return false;
     }
 
     try {
       const response = await searchGoogleBooks(searchInput);
+      console.log('Response:', response); // Log the response for debugging
 
+      // Check if the response is OK and contains the expected data
       if (!response.ok) {
-        throw new Error('something went wrong!');
+        throw new Error('Network response was not ok');
       }
 
-      const { items } = await response.json();
+      const data = await response.json();
+
+      // Log the entire data object to see its structure
+      console.log('Data received:', data);
+
+      const { items } = data; // Make sure to correctly destructure
+
+      // Check if items is defined
+      if (!items || items.length === 0) {
+        throw new Error('No books found');
+      }
 
       const bookData = items.map((book) => ({
         bookId: book.id,
         authors: book.volumeInfo.authors || ['No author to display'],
-        title: book.volumeInfo.title,
-        description: book.volumeInfo.description,
+        title: book.volumeInfo.title || 'No title available.',
+        description: book.volumeInfo.description || 'No description available.',
         image: book.volumeInfo.imageLinks?.thumbnail || '',
       }));
 
       setSearchedBooks(bookData);
       setSearchInput('');
     } catch (err) {
-      console.error(err);
+      console.error('Error occurred in handleFormSubmit:', err); // Log the error
+      alert(err.message); // Show error message to the user
     }
   };
 
   // create function to handle saving a book to our database
-  const handleSaveBook = async (bookId) => {
-    // find the book in `searchedBooks` state by the matching id
-    const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
-
-    // get token
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-    if (!token) {
-      return false;
-    }
-
+  const handleSaveBook = async (bookData) => {
     try {
       const { data } = await saveBook({
-        variables: {
-          bookData: {
-            bookId: bookToSave.bookId,
-            authors: bookToSave.authors,
-            title: bookToSave.title,
-            description: bookToSave.description,
-            image: bookToSave.image,
-            link: bookToSave.link, 
-          },
-        },
+        variables: { book: bookData },
       });
+      console.log('Book saved:', data);
 
-      // if book successfully saves to user's account, save book id to state
-      setSavedBookIds([...savedBookIds, bookToSave.bookId]);
-    } catch (err) {
-      console.error(err);
+      // Update the savedBookIds state
+      setSavedBookIds([...savedBookIds, bookData.bookId]);
+    } catch (error) {
+      console.error('Error saving book:', error);
     }
   };
 
@@ -145,7 +133,7 @@ const SearchBooks = () => {
                       <Button
                         disabled={savedBookIds?.some((savedBookId) => savedBookId === book.bookId)}
                         className='btn-block btn-info'
-                        onClick={() => handleSaveBook(book.bookId)}>
+                        onClick={() => handleSaveBook(book)}>
                         {savedBookIds?.some((savedBookId) => savedBookId === book.bookId)
                           ? 'This book has already been saved!'
                           : 'Save this Book!'}
