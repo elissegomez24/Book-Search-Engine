@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Book = require('../models/Book');
-const cleanDB = require('./cleanDB'); 
-const bookData = require('./bookData.json'); 
+const cleanDB = require('./cleanDB');
+const bookData = require('./bookData.json');
 
 // Connect to the MongoDB database
 mongoose.connect('mongodb://127.0.0.1:27017/googlebooks', {
@@ -41,8 +41,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/googlebooks', {
         // Log seedBooks to verify all data
         console.log('Books to be seeded:', seedBooks);
 
-        // Insert the seed data into the database
-        return Book.insertMany(seedBooks);
     })
     .then(() => {
         console.log('Books seeded!');
@@ -57,5 +55,5 @@ mongoose.connect('mongodb://127.0.0.1:27017/googlebooks', {
 
 // Function to generate a unique ID if needed
 function generateUniqueId() {
-    return `${Date.now()}-${Math.random()}`; 
+    return `${Date.now()}-${Math.random()}`;
 }

@@ -1,29 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useMutation } from '@apollo/client';
-import { Container, Col, Form, Button, Card, Row, Spinner } from 'react-bootstrap'; // Import Spinner
+import { Container, Col, Form, Button, Card, Row, Spinner } from 'react-bootstrap';
 import Auth from '../utils/auth';
 import { SAVE_BOOK } from '../utils/mutations';
 import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 
-// Debounce function
-const debounce = (func, delay) => {
-  let timeoutId;
-  return (...args) => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-      func.apply(null, args);
-    }, delay);
-  };
-};
-
 const SearchBooks = () => {
   const [searchedBooks, setSearchedBooks] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     return () => saveBookIds(savedBookIds);
@@ -31,56 +18,65 @@ const SearchBooks = () => {
 
   const [saveBook] = useMutation(SAVE_BOOK);
 
-  // Function to search books
-  const fetchBooks = async (input) => {
-    if (!input) return;
+  // Debounced fetchBooks function
+  const fetchBooks = useCallback(
+    async (input) => {
+      if (!input) return;
 
-    setLoading(true); // Start loading
+      setLoading(true);
+      try {
+        const response = await searchGoogleBooks(input);
+        if (response.status === 429) {
+          // Handle 429 Too Many Requests
+          alert('Too many requests. Please try again later.');
+          return;
+        }
 
-    try {
-      const response = await searchGoogleBooks(input);
-      console.log('Response:', response);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const data = await response.json();
+        const { items } = data;
+
+        if (!items || items.length === 0) {
+          throw new Error('No books found');
+        }
+
+        const bookData = items.map((book) => ({
+          bookId: book.id,
+          authors: book.volumeInfo.authors || ['No author to display'],
+          title: book.volumeInfo.title || 'No title available.',
+          description: book.volumeInfo.description || 'No description available.',
+          image: book.volumeInfo.imageLinks?.thumbnail || '',
+          link: book.volumeInfo.infoLink || '',
+        }));
+
+        setSearchedBooks(bookData);
+        setSearchInput(''); // Clear search input
+      } catch (err) {
+        console.error('Error occurred in fetchBooks:', err);
+        alert(err.message);
+      } finally {
+        setLoading(false);
       }
-
-      const data = await response.json();
-      console.log('Data received:', data);
-
-      const { items } = data;
-
-      if (!items || items.length === 0) {
-        throw new Error('No books found');
-      }
-
-      const bookData = items.map((book) => ({
-        bookId: book.id,
-        authors: book.volumeInfo.authors || ['No author to display'],
-        title: book.volumeInfo.title || 'No title available.',
-        description: book.volumeInfo.description || 'No description available.',
-        image: book.volumeInfo.imageLinks?.thumbnail || '',
-        link: book.volumeInfo.infoLink || '', 
-      }));
-
-      setSearchedBooks(bookData);
-      setSearchInput('');
-    } catch (err) {
-      console.error('Error occurred in fetchBooks:', err);
-      alert(err.message);
-    } finally {
-      setLoading(false); // Stop loading
-    }
-  };
+    },
+    []
+  );
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    debounce(fetchBooks, 500)(searchInput); // Call fetchBooks with debounce
+
+    // Debounce mechanism
+    const debounceDelay = 1000; // 1 second delay
+    clearTimeout(window.fetchTimeout);
+    window.fetchTimeout = setTimeout(() => {
+      fetchBooks(searchInput);
+    }, debounceDelay);
   };
 
   const handleSaveBook = async (bookData) => {
     try {
-      // Include the Google Play link when saving the book
       const { data } = await saveBook({
         variables: { book: { ...bookData, googlePlayLink: bookData.link } },
       });
