@@ -13,7 +13,7 @@ The Book Search Engine is a web application that allows users to search for book
 - [Features](#features)
 - [Contributing](#contributing)
 - [Screenshots](#screenshots)
-- [Deployment](#deployment)
+- [Deployment on Render](#deployment-on-render)
 - [Deployed Application](#deployed-application)
 - [License](#license)
 
@@ -79,12 +79,12 @@ The Book Search Engine is a web application that allows users to search for book
 
 ## Screenshots
 
-## Deployment
+## Deployment on Render
 
-To deploy the application using
+To deploy the application using Render
 
 1. **Push to GitHub**
-2.
+2. **Deploy on Render**
 3. **Access Application**
 
 ## Deployed Application
