@@ -4,7 +4,7 @@ const cleanDB = require('./cleanDB');
 const bookData = require('./bookData.json');
 
 // Connect to the MongoDB database
-mongoose.connect('mongodb://127.0.0.1:27017/googlebooks', {
+mongoose.connect('mongodb+srv://elisse:AgFL8HGoAwIhCB1H@bookstore.jml8r.mongodb.net/bookstore?retryWrites=true&w=majority&appName=bookstore', {
 })
     .then(() => {
         console.log('MongoDB connected!');
