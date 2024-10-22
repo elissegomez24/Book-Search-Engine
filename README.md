@@ -32,8 +32,9 @@ The Book Search Engine is a web application that allows users to search for book
 1. Clone the repository
 2. Navigate to the project directory: cd book-search-engine
 3. Install the dependencies: npm install
-4. Build the application: npm run build
-5. Start the development server: npm run dev
+4. Seed the application: npm run seed
+5. Build the application: npm run build
+6. Start the development server: npm run dev
 
 ## Usage
 
@@ -78,6 +79,7 @@ The Book Search Engine is a web application that allows users to search for book
 5. Open a pull request.
 
 ## Screenshots
+
 ![Book-Search-Engine/images/Book Search Engine1.png](<images/Book Search Engine1.png>)
 ![Book-Search-Engine\images\Book Search Engine2.png ](<images/Book Search Engine2.png>)
 ![Book-Search-Engine/images/Book Search Engine3.png](<images/Book Search Engine3.png>)
@@ -92,6 +94,8 @@ To deploy the application using Render
 3. **Access Application**
 
 ## Deployed Application
+
+https://book-search-engine-3qy8.onrender.com 
 
 ## License
 
