@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
 const Book = require('../models/Book');
 
-// Use the environment variable for MongoDB connection string
-const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/googlebooks';
-
-mongoose.connect(mongoURI, {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/googlebooks', {
 })
     .then(() => {
         console.log('MongoDB connected!');
