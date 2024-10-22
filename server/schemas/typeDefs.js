@@ -34,6 +34,7 @@ input BookInput {
   bookId: String!
   image: String
   link: String
+  googlePlayLink: String 
 }
 
 type Mutation {

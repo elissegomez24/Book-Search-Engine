@@ -6,7 +6,6 @@ import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
-  // Use useMutation to execute SAVE_BOOK mutation
   const [saveBook] = useMutation(SAVE_BOOK, {
     update(cache, { data: { saveBook } }) {
       const { me } = cache.readQuery({ query: GET_ME });
@@ -17,7 +16,6 @@ const SavedBooks = () => {
     },
   });
 
-  // Use useMutation to execute REMOVE_BOOK mutation
   const [removeBook] = useMutation(REMOVE_BOOK, {
     update(cache, { data: { removeBook } }) {
       const { me } = cache.readQuery({ query: GET_ME });
@@ -28,10 +26,8 @@ const SavedBooks = () => {
     },
   });
 
-  // Use useQuery to fetch user data
   const { loading, data } = useQuery(GET_ME);
 
-  // Check if data is available
   if (loading) {
     return (
       <Container className="text-center">
@@ -44,9 +40,7 @@ const SavedBooks = () => {
 
   const userData = data?.me;
 
-  // Create function to save the book
   const handleSaveBook = async (bookData) => {
-    console.log("Book Data:", bookData); // Log book data 
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
     if (!token) {
@@ -69,16 +63,9 @@ const SavedBooks = () => {
       console.log('Book saved:', data);
     } catch (error) {
       console.error('Error saving book:', error);
-      if (error.graphQLErrors) {
-        error.graphQLErrors.forEach(({ message }) => console.error('GraphQL error:', message));
-      }
-      if (error.networkError) {
-        console.error('Network error:', error.networkError);
-      }
     }
   };
 
-  // Create function to delete the book
   const handleDeleteBook = async (bookId) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
@@ -91,7 +78,6 @@ const SavedBooks = () => {
         variables: { bookId },
       });
 
-      // Upon success, remove book's id from localStorage
       removeBookId(bookId);
     } catch (err) {
       console.error(err);
@@ -113,12 +99,21 @@ const SavedBooks = () => {
           {userData?.savedBooks?.map((book) => (
             <Col md="4" key={book.bookId}>
               <Card border='dark'>
-                {book.image ? <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' /> : null}
+                {book.image && (
+                  <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' />
+                )}
                 <Card.Body>
                   <Card.Title>{book.title}</Card.Title>
                   <p className='small'>Authors: {book.authors.join(', ')}</p>
                   <Card.Text>{book.description}</Card.Text>
-                  <Button className='btn-block btn-danger' onClick={() => handleDeleteBook(book.bookId)}>
+                  <a
+                    href={book.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-primary mt-2">
+                    View on Google Play
+                  </a>
+                  <Button className='btn-block btn-danger mt-2' onClick={() => handleDeleteBook(book.bookId)}>
                     Delete this Book!
                   </Button>
                 </Card.Body>
