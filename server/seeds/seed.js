@@ -4,7 +4,7 @@ const cleanDB = require('./cleanDB');
 const bookData = require('./bookData.json');
 
 // Connect to the MongoDB database
-mongoose.connect('mongodb+srv://elissegomez24:Munchie2012!@cluster1.lrsn3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1', {
+mongoose.connect('mongodb+srv://elissegomez24:Elisse24!@cluster1.lrsn3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1', {
 })
     .then(() => {
         console.log('MongoDB connected!');
